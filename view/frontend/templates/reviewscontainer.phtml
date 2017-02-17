@@ -1,0 +1,207 @@
+<?php
+if ($this->isModuleEnabled()) {
+    $productId = $this->getCurrentProduct()->getId();
+    $totalProductReviewCount = $this->getProductReviewsCount();
+    $reviews = $this->getProductReviews();
+    $productReviewCount = count($reviews);
+    $avgStars = $this->getMiniStarsAvg();
+    $starsCountArray = $this->getStarsCount();
+    $ajaxUrl = 'prc/ajax/';
+
+    if ($totalProductReviewCount <= 0) {
+        echo $this->getNoReviewMessage();
+    } else {
+        ?>
+        <div class="ek-row" itemtype="http://schema.org/Product" itemscope="">
+            <meta content="<?php echo $productId ?>" itemprop="productID">
+            <script type='text/javascript'>
+                var prc_ajax_url = '<?php echo $ajaxUrl; ?>';
+                var prc_product_id = '<?php echo $productId ?>';
+                var prc_filter = 1;
+                var prc_limit = <?php echo $this->limit ?>;
+                var prc_page_offset = 1;
+                var total_product_review_count = <?php echo $totalProductReviewCount ?>;
+                var product_review_count = <?php echo $productReviewCount ?>;
+            </script>
+
+            <div class="ekomi_mm_review_widget reviews_large">
+                <div class="ekomi_header">
+                    <div class="ek-row">
+                        <div class="ek-small-12 ek-large-6 ek-columns">
+                            <span class="header_first_line">Product reviews for</span>
+                            <span class="header_second_line">
+                                <span itemprop="name"> <?php echo $this->getProductName() ?> </span>
+                                (<?php echo $totalProductReviewCount; ?>)
+                            </span>
+                        </div>
+                        <div class="ek-small-12 ek-large-6 ek-columns ek-text-right">
+                            <div class="ek-logo-text" style="">
+                                <span class="ek-powered-by">Powered by</span>
+                                <a class="ek-logo" href="http://www.ekomi.de/de/" target="_blank">
+                                    <img src="<?php echo $block->getViewFileUrl('Ekomi_ProductReviewContainer::images/ekomi_logo.png') ?>"/>
+                                </a>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+                <div class="ekomi_statistics">
+                    <div class="ek-row">
+                        <div class="ek-small-12 ek-large-6 ek-columns">
+                            <div class="ekomi_rating_graph">
+                                <?php for ($i = 5; $i > 0; $i--) { ?>
+                                    <div class="ek-row ekomi_bar ek-small-collapse" data-sort-id=<?php echo $i ?>>
+                                        <div class="ek-small-3 ek-large-3 ek-columns ek-text-right">
+                                            <span class="ratings_stars_amount"><?php echo $i ?>
+                                                <?php echo ($i == 1) ? " Star &nbsp" : ' Stars' ?>
+                                            </span>
+                                        </div>
+                                        <div class="ek-small-6 ek-large-6 ek-columns">
+                                            <div class="progress round">
+                                                <span class="meter"
+                                                      style="width: <?php echo ($totalProductReviewCount > 0) ? ($starsCountArray[$i . 'stars'] / $totalProductReviewCount) * 100 : 0; ?>%"></span>
+                                            </div>
+                                        </div>
+                                        <div class="ek-small-3 ek-large-3 ek-columns ek-text-left">
+                                            <span class="ratings_overview_number"><?php echo $starsCountArray[$i . 'stars']; ?></span>
+                                            <input type="submit" class="ekomi_button ekomi_ratings_filter_reset" value="X"/>
+                                        </div>
+                                    </div>
+                                <?php } ?>
+                            </div>
+                        </div>
+                        <div class="ek-small-12 ek-large-6 ek-columns ek-text-center">
+                            <!-- product average rating  -->
+                            <section itemprop="aggregateRating" itemscope itemtype="http://schema.org/AggregateRating">
+                                <div class="ekomi_average_rating">
+                                    <div class="ek-row ekomi_average_title ek-text-center">
+                                        Average rating
+                                    </div>
+                                    <div class="ek-row ek-text-center">
+                                        <div class="ekomi_average_stars">
+                                            <div class="ekomi_stars_wrap">
+                                                <div class="ekomi_stars_gold" style="width:<?php echo ($avgStars * 20); ?>%"></div>
+                                            </div>
+                                            <div class="ekomi_agregate_rating">
+                                                <span itemprop="ratingValue"><?php echo $avgStars; ?></span> / 5
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="ek-row ekomi_average_description ek-text-center">
+                                    Calculated from
+                                    <span itemprop="reviewCount"><?php echo $totalProductReviewCount; ?></span>
+                                    reviews
+                                </div>
+                            </section>
+                        </div>
+                    </div>
+                </div>
+                <div class="ekomi_filter">
+                    <div class="ek-row">
+                        <div class="ek-small-12 ek-medium-6 ek-columns ek-small-text-center">
+                            <span class="current_review_batch"><?php echo $productReviewCount ?></span> out of <?php echo $totalProductReviewCount ?> reviews :
+                        </div>
+                        <div class="ek-small-12 ek-medium-6 ek-columns ek-small-text-center ek-medium-text-right">
+                            <select class="ekomi_reviews_sort" autocomplete="off">
+                                <option value="1">Newest reviews</option>
+                                <option value="2">Oldest reviews</option>
+                                <option value="3">Most helpful reviews</option>
+                                <option value="4">Highest rating</option>
+                                <option value="5">Lowest rating</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div id="ekomi_reviews_container" class="ekomi_reviews">
+                    <?php foreach ($reviews as $key => $value) { ?>
+                        <section itemprop="review" itemscope itemtype="http://schema.org/Review">
+                            <span itemprop="author" itemscope itemtype="http://schema.org/Organization">
+                                <meta itemprop="name" content="eKomi">
+                            </span>
+                            <div class="ekomi_review ek-row">
+                                <div class="ek-large-4 ek-column ek-text-center">
+                                    <div class="ekomi_stars_container" itemprop="reviewRating" itemscope itemtype="http://schema.org/Rating">
+                                        <meta itemprop="worstRating" content="1">
+                                        <meta itemprop="ratingValue" content="<?php echo $value['stars'] ?>">
+                                        <meta itemprop="bestRating"  content="5">
+
+                                        <div class="ekomi_stars_wrap">
+                                            <div class="ekomi_stars_gold" style="width:<?php echo $value['stars'] * 20; ?>%"></div>
+                                        </div>
+                                    </div>
+                                    <span class="ekomi_review_time" itemprop="datePublished" content="<?php echo date('m.d.Y H:i:s', $value['timestamp']);
+                        ?>"><?php echo date('m.d.Y H:i:s', $value['timestamp']); ?>
+                                    </span>
+                                </div>
+                                <div class="ek-large-8 ek-column">
+                                    <p class="ekomi_review_text" itemprop="reviewBody"><?php echo $value['review_comment'] ?></p>
+                                    <div class="ekomi_review_helpful_button_wrapper ">
+                                        <span class="ekomi_review_helpful_info ek-small-text-center ek-medium-text-left"
+                                         style=" display:<?php echo (($value['helpful'] + $value['nothelpful']) > 0) ?  'block' : 'none'?>;" >
+                                            <?php echo $value['helpful'] ?> out of <?php echo ($value['helpful'] + $value['nothelpful']) ?> people found this review helpful
+                                        </span>
+                                        <div class="ekomi_review_helpful_thankyou ek-small-text-center ek-medium-text-left"
+                                             style="display:none;">
+                                            Thank you for your vote!
+                                        </div>
+                                        <div class="ekomi_review_helpful_question ek-small-text-center ek-medium-text-left">
+                                            <span>Did you find this review helpful?</span>
+                                            <input type="submit" class="ekomi_button ekomi_review_helpful_button" name="ekomi_answer"
+                                                   data-review-helpfulness="1" data-review-id="<?php echo $value['id']; ?>" value=Yes>
+                                            <input type="submit" class="ekomi_button ekomi_review_helpful_button" name="ekomi_answer"
+                                                   data-review-helpfulness="0" data-review-id="<?php echo $value['id']; ?>" value=No>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+                    <?php } ?>
+                </div>
+                <div class="ekomi_footer">
+                    <div class="ek-row">
+                        <div class="ek-large-12 ek-columns ek-text-center">
+                            <?php if ($productReviewCount < $totalProductReviewCount) { ?>
+                                <span class="loads_more_reviews">Show more</span>
+                            <?php } ?>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="ekomi_review_template_for_js" style="display:none">
+                <section itemprop="review" itemscope itemtype="http://schema.org/Review">
+                    <span itemprop="author" itemscope itemtype="http://schema.org/Organization"><meta itemprop="name" content="eKomi"></span>
+                    <div class="ekomi_review ek-row">
+                        <div class="ek-large-4 ek-column ek-text-center">
+                            <div class="ekomi_stars_container" >
+                                <div class="ekomi_stars_wrap">
+                                    <div class="ekomi_stars_gold" style="width:0%"></div>
+                                </div>
+                            </div>
+                            <span class="ekomi_review_time" itemprop="datePublished" content=""></span>
+                        </div>
+
+                        <div class="ek-large-8 ek-column">
+                            <p class="ekomi_review_text" itemprop="reviewBody"></p>
+                            <div class="ekomi_review_helpful_button_wrapper ">
+                                <span class="ekomi_review_helpful_info ek-small-text-center ek-medium-text-left"  style="display:none;" ></span>
+                                <div class="ekomi_review_helpful_thankyou ek-small-text-center ek-medium-text-left"
+                                     style="display:none;">Thank you for your vote!
+                                </div>
+                                <div class="ekomi_review_helpful_question ek-small-text-center ek-medium-text-left">
+                                    <span>Did you find this review helpful?</span>
+                                    <input type="submit" class="ekomi_button ekomi_review_helpful_button" name="ekomi_answer"
+                                           data-review-helpfulness="1" data-review-id="" value=Yes>
+                                    <input type="submit" class="ekomi_button ekomi_review_helpful_button" name="ekomi_answer"
+                                           data-review-helpfulness="0" data-review-id="" value=No>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+        <?php
+    }
+}?>

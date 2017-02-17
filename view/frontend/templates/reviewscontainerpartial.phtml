@@ -1,0 +1,47 @@
+<?php if ($this->isModuleEnabled()) { ?>
+    <?php $reviews = $this->getData('reviews'); ?>
+    <?php foreach ($reviews as $key => $value) { ?>
+        
+        <section itemprop="review" itemscope itemtype="http://schema.org/Review">
+            <span itemprop="author" itemscope itemtype="http://schema.org/Organization">
+                <meta itemprop="name" content="eKomi">
+            </span>
+            <div class="ekomi_review ek-row">
+                <div class="ek-large-4 ek-column ek-text-center">
+                    <div class="ekomi_stars_container" itemprop="reviewRating" itemscope itemtype="http://schema.org/Rating">
+                        <meta itemprop="worstRating" content="1">
+                        <meta itemprop="ratingValue" content="<?php echo $value['stars'] ?>">
+                        <meta itemprop="bestRating"  content="5">
+
+                        <div class="ekomi_stars_wrap">
+                            <div class="ekomi_stars_gold" style="width:<?php echo $value['stars'] * 20; ?>%"></div>
+                        </div>
+                    </div>
+                    <span class="ekomi_review_time" itemprop="datePublished" content="<?php echo date('m.d.Y H:i:s', $value['timestamp']);
+        ?>"><?php echo date('m.d.Y H:i:s', $value['timestamp']); ?>
+                    </span>
+                </div>
+                <div class="ek-large-8 ek-column">
+                    <p class="ekomi_review_text" itemprop="reviewBody"><?php echo $value['review_comment'] ?></p>
+                    <div class="ekomi_review_helpful_button_wrapper ">
+                        <span class="ekomi_review_helpful_info ek-small-text-center ek-medium-text-left"
+                              style=" display:<?php echo (($value['helpful'] + $value['nothelpful']) > 0) ?  'block' : 'none'?>;" >
+                            <?php echo $value['helpful'] ?> people out of <?php echo ($value['helpful'] + $value['nothelpful']) ?> found this review helpful
+                        </span>
+                        <div class="ekomi_review_helpful_thankyou ek-small-text-center ek-medium-text-left"
+                             style="display:none;">
+                            Thank you for your vote!
+                        </div>
+                        <div class="ekomi_review_helpful_question ek-small-text-center ek-medium-text-left">
+                            <span>Did you find this review helpful?</span>
+                            <input type="submit" class="ekomi_button ekomi_review_helpful_button" name="ekomi_answer"
+                                   data-review-helpfulness="1" data-review-id="<?php echo $value['id']; ?>" value=Yes>
+                            <input type="submit" class="ekomi_button ekomi_review_helpful_button" name="ekomi_answer"
+                                   data-review-helpfulness="0" data-review-id="<?php echo $value['id']; ?>" value=No>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    <?php } ?>
+<?php }?>

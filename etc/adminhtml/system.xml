@@ -1,0 +1,50 @@
+<?xml version="1.0"?>
+
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="../../../Backend/etc/system_file.xsd">
+    <system>
+        <tab id="ekomi" translate="label" sortOrder="1">
+            <label>Ekomi</label>
+        </tab>
+        <section id="prc" translate="label" sortOrder="1" showInDefault="1"
+                 showInWebsite="1" showInStore="1">
+            <label>Product Review Container</label>
+            <tab>ekomi</tab>
+            <resource>Ekomi_ProductReviewContainer::system_config</resource>
+            <group id="general" translate="label" type="text" sortOrder="1" showInDefault="1"
+                   showInWebsite="1" showInStore="1">
+                <label>Product Review Container Configuration</label>
+                <field id="active" translate="label" type="select" sortOrder="1"
+                       showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Enabled</label>
+                    <comment>To enable for specific store or website, please change scop from top left</comment>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <backend_model>Ekomi\ProductReviewContainer\Model\Validate</backend_model>
+                </field>
+                <field id="shop_id" translate="label" type="text" sortOrder="2"
+                       showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Shop ID</label>
+                    <comment>Interface id received by eKomi</comment>
+                    <validate>required-entry</validate>
+                </field>
+                <field id="shop_password" translate="label" type="text" sortOrder="3"
+                       showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Shop Password</label>
+                    <comment>Interface password received by eKomi</comment>
+                    <validate>required-entry</validate>
+                </field>
+                <field id="group_reviews" translate="label" type="select" sortOrder="4"
+                       showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Group Reviews</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>If enabled, reviews for child products will also be displayed.</comment>
+                </field>
+                <field id="no_review_message" translate="label" type="textarea"
+                       sortOrder="5" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Text Message</label>
+                    <comment>Text when no reviews found.</comment>
+                </field>
+            </group>
+        </section>
+    </system>
+</config>
