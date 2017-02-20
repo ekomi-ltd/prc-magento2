@@ -152,7 +152,6 @@ class Reviews extends AbstractModel
      */
     protected function getChildProductIds($product)
     {
-        return array (2, 'omairproduct09');
         if(!$this->_helper->getIsActive())
             return false;
 

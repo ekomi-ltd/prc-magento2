@@ -77,7 +77,7 @@ class Validate extends \Magento\Framework\App\Config\Value
             $this->setValue(0);
         }
         else {
-            $this->reviewsModel->populateTable('1w');
+            $this->reviewsModel->populateTable('all');
             return parent::beforeSave();
         }
     }
