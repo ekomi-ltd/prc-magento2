@@ -1,11 +1,14 @@
 <?php if ($this->isModuleEnabled()) { ?>
     <?php $productId = $this->getCurrentProduct()->getId() ?>
-    <!-- product average rating  -->
-    <div class="ekomi_average_rating">
-        <div class="ekomi_average_stars">
-            <div class="ekomi_stars_wrap">
-                <div class="ekomi_stars_gold" style="width:<?= ($this->getMiniStarsAvg() * 20); ?>%"></div>
+    <?php $totalProductReviewCount = $this->getProductReviewsCount(); ?>
+    <?php if ($totalProductReviewCount > 0) { ?>
+        <!-- product average rating  -->
+        <div class="ekomi_average_rating">
+            <div class="ekomi_average_stars">
+                <div class="ekomi_stars_wrap">
+                    <div class="ekomi_stars_gold" style="width:<?= ($this->getMiniStarsAvg() * 20); ?>%"></div>
+                </div>
             </div>
         </div>
-    </div>
+    <?php } ?>
 <?php } ?>

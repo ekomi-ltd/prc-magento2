@@ -21,6 +21,7 @@ use Magento\Framework\Registry;
 use Magento\Framework\Data\Collection\AbstractDb;
 use Magento\Bundle\Model\ResourceModel\Selection;
 use Magento\GroupedProduct\Model\ResourceModel\Product\Link;
+use Magento\Catalog\Model\ProductFactory;
 
 /**
  * Class Reviews
@@ -32,6 +33,7 @@ class Reviews extends AbstractModel
     public $_helper;
     public $_productLinks;
     public $_bundleSelection;
+    public $_productFactory;
 
     /**
      * Reviews constructor.
@@ -47,11 +49,12 @@ class Reviews extends AbstractModel
      */
     public function __construct( Selection $bundleSelection, Link $productLink,
         Data $helper, Context $context, Registry $registry,  $resource = null,
-        AbstractDb $resourceCollection = null, array $data = [] )
+        ProductFactory $productFactory, AbstractDb $resourceCollection = null, array $data = [] )
     {
         $this->_helper = $helper;
         $this->_productLinks = $productLink;
         $this->_bundleSelection = $bundleSelection;
+        $this->_productFactory = $productFactory;
         parent::__construct($context, $registry, $resource, $resourceCollection, $data);
     }
 
@@ -150,13 +153,15 @@ class Reviews extends AbstractModel
      *
      * @return array|bool
      */
-    protected function getChildProductIds($product)
+    protected function getChildProductIds($productId)
     {
         if(!$this->_helper->getIsActive())
             return false;
 
         $productIDs = array();
-        $productIDs[] = $product->getId();
+        //$productIDs[] = $product->getId();
+        $productIDs[] = $productId;
+        $product = $this->_productFactory->create()->load($productId);
 
         if (!$this->_helper->getGroupReview())
             return $productIDs;
@@ -221,7 +226,7 @@ class Reviews extends AbstractModel
         if(!$this->_helper->getIsActive())
             return false;
 
-        $productIDs = $this->getChildProductIds($product);
+        $productIDs = $this->getChildProductIds($product->getId());
 
         $avg = $this->getCollection()
             ->addFieldToSelect('stars')
