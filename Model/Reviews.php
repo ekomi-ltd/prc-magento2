@@ -47,15 +47,16 @@ class Reviews extends AbstractModel
      * @param AbstractDb|null $resourceCollection
      * @param array           $data
      */
-    public function __construct( Selection $bundleSelection, Link $productLink,
-        Data $helper, Context $context, Registry $registry,  $resource = null,
-        ProductFactory $productFactory, AbstractDb $resourceCollection = null, array $data = [] )
+    public function __construct( Context $context, Registry $registry,
+        Selection $bundleSelection, Link $productLink, Data $helper,
+        ProductFactory $productFactory, AbstractDb $resourceCollection = null,
+        array $data = [] )
     {
         $this->_helper = $helper;
         $this->_productLinks = $productLink;
         $this->_bundleSelection = $bundleSelection;
         $this->_productFactory = $productFactory;
-        parent::__construct($context, $registry, $resource, $resourceCollection, $data);
+        parent::__construct($context, $registry, null, $resourceCollection, $data);
     }
 
     /**

@@ -139,4 +139,14 @@ class Reviews extends \Magento\Framework\View\Element\Template implements \Magen
     {
         return $this->_helper->getIsActive();
     }
+
+    /**
+     * Returns path to JS directory
+     *
+     * @return string
+     */
+    public function getJsPath()
+    {
+        return $this->getViewFileUrl('Ekomi_ProductReviewContainer::js');
+    }
 }
