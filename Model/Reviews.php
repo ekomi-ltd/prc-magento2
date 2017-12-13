@@ -80,27 +80,57 @@ class Reviews extends AbstractModel
                          'message' => 'Plugin is disabled.');
         }
 
-        $shopId     = $this->_helper->getShopId();
-        $apiReviews = $this->getApiReviews($range);
-        $apiReviews = is_array($apiReviews) ? $apiReviews : array();
+        $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
 
-        foreach ($apiReviews as $review) {
+        $storeManager = $objectManager->get('Magento\Store\Model\StoreManagerInterface');
+        $stores = $storeManager->getStores($withDefault = false);
 
-            if ($this->reviewExists($review))
-                continue;
+        $processedShops = array();
 
-            $row = array(
-                'shop_id'        => $shopId,
-                'order_id'       => $review['order_id'],
-                'product_id'     => $review['product_id'],
-                'timestamp'      => $review['submitted'],
-                'stars'          => $review['rating'],
-                'review_comment' => $review['review'],
-                'helpful'        => 0,
-                'nothelpful'     => 0,
-            );
-            $this->setData($row);
-            $this->save();
+        //Traversing through stores
+        foreach ($stores as $store) {
+            $storeId = $store->getId();
+            $shopId  = $this->_helper->getShopId($storeId);
+
+            if($shopId && !in_array($shopId, $processedShops)) {
+
+                //adding current shop ID to processed list
+                $processedShops[] = $shopId;
+
+                $shopPw = $this->_helper->getShopPw($storeId);
+
+                $apiReviews = $this->getApiReviews(
+                    $shopId,
+                    $shopPw,
+                    $range
+                );
+                $apiReviews = is_array($apiReviews) ? $apiReviews : array();
+
+                foreach ($apiReviews as $review) {
+
+                    if ($this->reviewExists($review))
+                        continue;
+
+                    $row = array(
+                        'shop_id'        => $shopId,
+                        'order_id'       => $review['order_id'],
+                        'product_id'     => $review['product_id'],
+                        'timestamp'      => $review['submitted'],
+                        'stars'          => $review['rating'],
+                        'review_comment' => $review['review'],
+                        'helpful'        => 0,
+                        'nothelpful'     => 0,
+                    );
+                    $this->setData($row);
+
+                    try {
+                        $this->save();
+                    } catch (Exception $exc) {
+
+                    }
+
+                }
+            }
         }
     }
 
@@ -109,13 +139,13 @@ class Reviews extends AbstractModel
      *
      * @return array|bool|mixed|object
      */
-    public function getApiReviews($range = '1w')
+    public function getApiReviews($shopId, $shopPw, $range = '1w')
     {
         if(!$this->_helper->getIsActive())
             return false;
 
         $ekomi_api_url = 'http://api.ekomi.de/v3/getProductfeedback?interface_id=' .
-            $this->_helper->getShopId() . '&interface_pw=' . $this->_helper->getShopPw() .
+            $shopId . '&interface_pw=' . $shopPw .
             '&type=json&charset=utf-8&range=' . $range;
 
         $product_reviews = file_get_contents($ekomi_api_url);

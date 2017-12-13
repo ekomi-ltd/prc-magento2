@@ -56,23 +56,45 @@ class Data extends AbstractHelper
     /**
      * @return mixed
      */
-    public function getShopId()
+    public function getShopId($storeId = false)
     {
         $storeScope = \Magento\Store\Model\ScopeInterface::SCOPE_STORE;
-        return $this->scopeConfig->getValue(
-            self::XML_PATH_SHOP_ID, $storeScope
-        );
+
+        if($storeId){
+            $shopId = $this->scopeConfig->getValue(
+                self::XML_PATH_SHOP_ID,
+                $storeScope,
+                $storeId
+            );
+        } else {
+            $shopId = $this->scopeConfig->getValue(
+                self::XML_PATH_SHOP_ID, $storeScope
+            );
+        }
+
+        return $shopId;
     }
 
     /**
      * @return mixed
      */
-    public function getShopPw()
+    public function getShopPw($storeId = false)
     {
         $storeScope = \Magento\Store\Model\ScopeInterface::SCOPE_STORE;
-        return $this->scopeConfig->getValue(
-            self::XML_PATH_SHOP_PASSWORD, $storeScope
-        );
+
+        if($storeId){
+            $shopPw = $this->scopeConfig->getValue(
+                self::XML_PATH_SHOP_PASSWORD,
+                $storeScope,
+                $storeId
+            );
+        } else {
+            $shopPw = $this->scopeConfig->getValue(
+                self::XML_PATH_SHOP_PASSWORD, $storeScope
+            );
+        }
+
+        return $shopPw;
     }
 
     /**
