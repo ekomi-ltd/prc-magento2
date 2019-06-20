@@ -3,7 +3,12 @@ if ($this->isModuleEnabled()) {
     $productId = $this->getCurrentProduct()->getId();
     $totalProductReviewCount = $this->getProductReviewsCount();
     $reviews = $this->getProductReviews();
-    $productReviewCount = count($reviews);
+
+    $productReviewCount = 0;
+    if (is_array($reviews) || $reviews instanceof Countable) {
+        $productReviewCount = count($reviews);
+    }
+
     $avgStars = $this->getMiniStarsAvg();
     $starsCountArray = $this->getStarsCount();
     $ajaxUrl = 'prc/ajax/';

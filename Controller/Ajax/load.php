@@ -14,6 +14,8 @@
  */
 namespace Ekomi\ProductReviewContainer\Controller\Ajax;
 
+use Countable;
+
 /**
  * Class Load
  *
@@ -86,10 +88,15 @@ class Load extends \Magento\Framework\App\Action\Action
                 ->setData('reviews', $reviews)
                 ->toHtml();
 
+            $productReviewCount = 0;
+            if (is_array($reviews) || $reviews instanceof Countable) {
+                $productReviewCount = count($reviews);
+            }
+
             $response = array(
                 'state' => 'success',
                 'message' => __('reviews loaded!'),
-                'reviews_data' => ['result' => $reviewHtml, 'count' => count($reviews)],
+                'reviews_data' => ['result' => $reviewHtml, 'count' => $productReviewCount],
                 '_POST' => $this->getRequest()->getPost()
             );
         }
